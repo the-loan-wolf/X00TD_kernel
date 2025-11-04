@@ -1,19 +1,21 @@
-Linux kernel
-============
+# How to Compile
+1. Download Toolchains:
+[GCC 7.3](https://github.com/Teamlions/aarch64-linux-gnu-7.3)  
+you also have to find & install `arm-none-eabi-gcc`, it is used for compiling compact vDSO. I'd installed it with my package manager
 
-There are several guides for kernel developers and users. These guides can
-be rendered in a number of formats, like HTML and PDF. Please read
-Documentation/admin-guide/README.rst first.
+```sh
+export PATH="~/kernel-stuffs/cross-compiler/gcc/bin:$PATH"
+export ARCH=arm64
+export CROSS_COMPILE=aarch64-linux-gnu-
+export CLANG_TRIPLE=aarch64-linux-gnu-
+export CROSS_COMPILE_ARM32=arm-none-eabi-
+```
+`mkdir -p out`  
+`make O=out clean`  
+`make O=out mrproper`  
+`make O=out X00TD_defconfig`  
+`make O=out -j$(nproc --all) KCFLAGS=-Wno-error`  
+or  
+`make O=out KCFLAGS=-Wno-error`  
 
-In order to build the documentation, use ``make htmldocs`` or
-``make pdfdocs``.  The formatted documentation can also be read online at:
-
-    https://www.kernel.org/doc/html/latest/
-
-There are various text files in the Documentation/ subdirectory,
-several of them using the Restructured Text markup notation.
-See Documentation/00-INDEX for a list of what is contained in each file.
-
-Please read the Documentation/process/changes.rst file, as it contains the
-requirements for building and running the kernel, and information about
-the problems which may result by upgrading your kernel.
+`-Wno-error` flag is import, otherwise Qualcomm’s QCACLD-3.0 Wi-Fi driver will fail compiling.
